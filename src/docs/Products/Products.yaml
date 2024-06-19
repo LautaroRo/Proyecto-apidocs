@@ -1,0 +1,180 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtener productos
+      tags:
+        - Obtener Products
+      responses:
+        "200":
+          description: Productos cargados correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "500":
+          description: Error del servidor
+  /api/products/addProduct:
+    post:
+      summary: Crear productos
+      tags:
+      - Crear Product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: "Se creo el producto exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: "Error al crear un producto"
+  /api/products/find/{id}:
+    get:
+      summary: Encontrar productos por id
+      tags:
+      - Buscar producto por id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "Parametro id del producto"
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Se encontro el producto"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: "Error al encontrar un producto"
+  /api/products/deleteProduct/{id}:
+    delete:
+      summary: Eliminar un producto
+      tags:
+      - Elimiar producto por id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "Parametro id del producto"
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Se elimino el producto con exito"
+        "400":
+          description: "Error al eliminar el producto"
+  /api/products/updateProduct/{id}:
+    put:
+      summary: Actualizar usuarios
+      tags:
+      - Actualizar el producto
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "Parametro id del producto"
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requestBodies/createProduct"
+      responses:
+        "200":
+          description: "Se actualizo el producto con exito"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "400":
+          description: "Error al eliminar el producto"
+
+
+
+components:
+  schemas:
+    Thumbnails:
+      type: object
+      properties:
+        img:
+          type: string
+          description: URL de la imagen
+      required:
+        - img
+      example: "https://example.com/image.jpg"
+      
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título del producto
+        description:
+          type: string
+          description: Descripción del producto
+        code:
+          type: string
+          description: Código del producto
+        category:
+          type: string
+          description: Categoría del producto
+        brands:
+          type: string
+          description: Marca(s) del producto
+        stock:
+          type: integer
+          description: Cantidad en stock
+        thumbnails:
+          type: array
+          items:
+            $ref: "#/components/schemas/Thumbnails"
+          description: Lista de miniaturas del producto
+        status:
+          type: boolean
+          description: Estado del producto (activo/inactivo)
+        price:
+          type: number
+          format: float
+          description: Precio del producto
+      required:
+        - title
+        - description
+        - code
+        - category
+        - stock
+        - thumbnails
+        - status
+        - price
+      example:
+        title: "Producto de ejemplo"
+        description: "Este es un producto de ejemplo"
+        code: "EX123"
+        category: "Categoría de ejemplo"
+        brands: "Marca de ejemplo"
+        stock: 50
+        thumbnails:
+          - img: "https://example.com/image.jpg"
+        status: true
+        price: 99.99
+  requestBodies:
+    createProduct:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Product'
+      description: Objeto JSON para crear un nuevo producto

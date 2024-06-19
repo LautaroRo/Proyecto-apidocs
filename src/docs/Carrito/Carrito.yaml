@@ -1,0 +1,150 @@
+paths:
+  /api/cart:
+    get:
+      summary:  "Mostrar todos los carritos existentes"
+      tags:
+      - Mostrar carritos
+      responses:
+        "200":
+          description: "Carritos existentes"
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: "#/components/schemas/Cart"
+        "500":
+          description: "Error al encontrar los carritos"
+  /api/cart/addProduct:
+    post:
+      summary: "Agregar producto al carrito"
+      tags:
+      - Añadir producto al carrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requestBodies/CartItemRequest"
+      responses:
+        "200":
+          description: "Se pudo añadir el producto exitosamente"
+        "500":
+          description: "No se puedo añadir el producto"
+  /api/cart/purchase:
+    post:
+      tags:
+      - Ejecutar compra del producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requestBodies/PurchaseCart"
+      responses:
+        "200":
+          description: "Compra realizada"
+        "500":
+          description: "Error"
+  /api/cart/create/{uid}:
+    post:
+      tags:
+      - Crear un carrito
+      parameters:
+      - name: uid
+        in: path
+        required: true
+        description: "Parametro para crear el carrito"
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Carrito creado"
+        "500":
+          description: "Error al crear un carrito"
+      
+
+
+components:
+  schemas:
+    ProductCart:
+      type: object
+      properties:
+        product:
+          type: string
+          format: uuid
+          description: ID del producto
+        quantity:
+          type: number
+          description: Cantidad de este producto en el carrito
+          minimum: 1
+      required:
+        - product
+        - quantity
+      example:
+        product: "6671280f6b624f9cbf904259"
+        quantity: 2
+    
+    Cart:
+      type: object
+      properties:
+        user:
+          type: string
+          format: uuid
+          description: ID del usuario
+        productsCart:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductCart"
+      required: 
+        - user
+        - productsCart 
+      example:
+        user: "60d0fe4f5311236168a109ca"
+        productsCart:
+          - product: "6671280f6b624f9cbf904259"
+            quantity: 2
+          - product: "6671280f6b624f9cbf904260"
+            quantity: 1
+  requestBodies:
+    CartItemRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              cid:
+                type: string
+                description: ID del carrito
+                example: "6672886d450c5d04428c56d3"
+              pid:
+                type: string
+                format: uuid
+                description: ID del producto
+                example: "6671280f6b624f9cbf904259"
+              cantidad:
+                type: integer
+                description: Cantidad del producto en el carrito
+                minimum: 1
+                example: 7
+            required:
+              - cid
+              - pid
+              - cantidad
+    PurchaseCart:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              cid:
+                type: string
+                description: ID del carrito
+                example: "6672886d450c5d04428c56d3"
+              pid:
+                type: string
+                format: uuid
+                description: ID del producto
+                example: "6671280f6b624f9cbf904259"
+            required:
+              - cid
+              - pid

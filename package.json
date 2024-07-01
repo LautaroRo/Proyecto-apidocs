@@ -5,7 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon src/app.js"
+    "start": "nodemon src/app.js",
+    "supertestCart": "mocha test/supertestCart.test.js",
+    "supertestProducts": "mocha test/supertestProduct.test.js",
+    "supertestSessions": "mocha test/supertestSessions.test.js"
   },
   "keywords": [],
   "author": "",
@@ -24,10 +27,13 @@
     "passport-github2": "^0.1.12",
     "passport-local": "^1.0.0",
     "socket.io": "^4.7.5",
+    "supertest": "^7.0.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "chai": "^5.1.1",
+    "mocha": "^10.5.2",
     "nodemon": "^3.1.0"
   }
 }

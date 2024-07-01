@@ -16,10 +16,10 @@ const initializePassport = () => {
                 const { first_name, last_name, role, number, age, email } = req.body
 
                 try {
-                    console.log('Email:', email); // Verifica el contenido del email
-                    console.log('From:', entorno.MAIL_USERNAME); // Verifica el contenido de MAIL_USERNAME
+
                     const user = await users.getOne(username);
 
+                    console.log(user)
                     if (user) {
                         return done(null, false)
                     }
@@ -44,7 +44,7 @@ const initializePassport = () => {
             
                     const result = await users.createUser(newUser)
 
-                    console.log(email)
+
                     await transport.sendMail({
                         from:`Correo de prueba <${entorno.MAIL_USERNAME}/>`,
                         to: email,
@@ -71,7 +71,6 @@ const initializePassport = () => {
         new LocalStrategy({ usernameField: "email" },
 
             async (username, password, done) => {
-
 
                 try {
                     const user = await users.getOne(username);

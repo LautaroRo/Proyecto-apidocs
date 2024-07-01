@@ -7,6 +7,8 @@ class routerCart extends RouterMain{
         this.post("/create/:uid", this.createCart)
         this.post("/addProduct", this.addProduct)
         this.post("/purchase", this.purchaseProduct)
+        this.delete("/deleteAllProduct", this.deleteProductInCart)
+        this.delete("/deleteCart/:id", this.deleteCart)
     }
 
 
@@ -30,7 +32,10 @@ class routerCart extends RouterMain{
         const cart = await users.getCartById(cid)
         const user = await users.getUserById(cart.user)
 
-        if(product.stock < cantidad) return res.send("No hay suficiente stock")
+        if(product.stock < cantidad) {
+            console.log("paso")
+            return res.send("No hay suficiente stock")
+        }
         if(user.role === "Admin") return res.send("Lo sentimos solo los usuarios pueden agregar productos en el carrito")
 
         users.addProductInCart(cid,pid,cantidad)
@@ -56,6 +61,24 @@ class routerCart extends RouterMain{
 
     }
 
+    async deleteProductInCart(req,res){
+        const {cid,pid} = req.body
+
+        const result = await users.deleteProductInCart(cid,pid)
+
+        res.json({payload: result, status:"succes"})
+    }
+
+
+    async deleteCart(req,res){
+
+        const id = req.params.id
+
+        await users.deleteCart(id)
+
+        
+        res.json({status: "Succes"})
+    }
 }
 
 

@@ -42,6 +42,11 @@ class users {
         return result
     }
 
+    deleteUser = async (email) => {
+        let result = await userModel.deleteOne({email: email})
+
+        return result
+    }
 
     //Products
 
@@ -71,9 +76,9 @@ class users {
         return result
     }
 
-    deleteProduct = async (id) => {
+    deleteProduct = async (code) => {
 
-        let result = await productsModel.deleteOne({ _id: id })
+        let result = await productsModel.deleteOne({ code: code })
         return result
     }
 
@@ -95,6 +100,14 @@ class users {
             console.error("Error al crear el carrito:", error);
             throw error;
         }
+    }
+
+    deleteCart = async (id) => {
+
+        const result = await cartsModel.deleteOne({user: id})
+        
+        return result
+
     }
 
     addProductInCart = async (cid, pid, cantidad) => {
@@ -127,7 +140,7 @@ class users {
 
         await cart.save();
 
-        console.log("Producto eliminado del carrito");
+        return console.log("Succes")
     }
 
 

@@ -6,7 +6,7 @@ class routerProducts extends RouterMain{
         this.get("/", this.getProducts)
         this.put("/updateProduct/:id", this.updateProduct)
         this.post("/addProduct", this.addProduct)
-        this.delete("/deleteProduct/:id", this.deleteProduct)
+        this.delete("/deleteProduct/:code", this.deleteProduct)
         this.get("/find/:id", this.ProductsId)
         
     }
@@ -14,13 +14,13 @@ class routerProducts extends RouterMain{
 
     async getProducts(req,res) {
         const result = await users.getAll()
-        res.json({products: result})
+        return res.json({products: result})
     }
 
 
     async deleteProduct(req,res){
         try{
-            const params = req.params.id
+            const params = req.params.code
 
             await users.deleteProduct(params)
 
@@ -40,10 +40,10 @@ class routerProducts extends RouterMain{
             
             const result = await users.updateProduct(body, params)
 
-            res.json({payload: result})
+            return res.json({payload: result})
 
         }catch(error){
-            res.json({error:error})
+            return res.json({error:error})
         }
     }
 

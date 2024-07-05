@@ -47,7 +47,7 @@ describe("Test sessions", async function(){
         expect(statusCode).to.be.equal(200)
 
 
-        const elimanted = await requester.delete(`/api/sessions/deleteUser/${obj.email}`)
+        const elimanted = await requester.delete(`/api/users/deleteUser/${obj.email}`)
 
 
         expect(elimanted.ok).to.be.true

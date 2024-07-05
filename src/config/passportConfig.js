@@ -19,10 +19,10 @@ const initializePassport = () => {
 
                     const user = await users.getOne(username);
 
-                    console.log(user)
                     if (user) {
                         return done(null, false)
                     }
+
 
                     const newUser = {
                         first_name,
@@ -31,7 +31,13 @@ const initializePassport = () => {
                         number,
                         age,
                         email,
-                        password: createHas(password)
+                        password: createHas(password),
+                        documents: [
+                            {
+                                name: req.file.originalname,
+                                url: `/public/images/${req.file.filename}`
+                            }
+                        ]
                     }
 
                     req.session.user = {

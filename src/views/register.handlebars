@@ -1,6 +1,6 @@
 <div>
     <h1>Registro</h1>
-    <form id="registerForm">
+    <form id="registerForm" enctype="multipart/form-data">
 
         <label>Nombre</label>
         <input name="first_name">
@@ -24,6 +24,11 @@
         </select>
 
         <br />
+        <br />
+        <label>Documento</label>
+        <input type="file" name="image">
+        <br />
+
         <label>Contraseña</label>
         <input type="password" name="password">
 

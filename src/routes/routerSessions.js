@@ -1,4 +1,4 @@
-import { users } from "../dao/factory.js";
+import upload from "../config/multer.js";
 import RouterMain from "./RouterMain.js";
 import passport from "passport";
 
@@ -6,11 +6,12 @@ import passport from "passport";
 class routeUsers extends RouterMain {
     init() {
         this.get("/Profile", this.traerUsuarios)
-        this.post('/register', passport.authenticate('register', {
+        this.post('/register',upload.single("image"), passport.authenticate('register', {
             failureRedirect: '/failRegister'
         }), (req, res) => {
-
             try {
+                const {image} = req.body
+                console.log(image)
                 return res.json({ status: "succes" });
             } catch (error) {
                 return res.json({ error: error })
@@ -35,26 +36,9 @@ class routeUsers extends RouterMain {
                 res.send("No se logro")
             }
         });
-        this.delete("/deleteUser/:email", this.deleteUser)
-    }
-
-
-    async deleteUser(req, res) {
-        try {
-            const email = req.params.email
-            console.log(email)
-            const result = await users.deleteUser(email)
-
-            if(!result) return res.json({status: "Error"})
-            
-                return res.json({status:"Succes"})
-
-        } catch (error) {
-
-            return res.json({status: error})
-        }
 
     }
+
     async traerUsuarios(req, res) {
         const nombreUsuario = req.session.user.first_name;
 

@@ -48,6 +48,17 @@ class users {
         return result
     }
 
+    changeRole = async (id,role) => {
+        let result = await userModel.updateOne({_id: id}, {$set: role})
+
+        return result
+    }
+
+    lastConnection = async (user) => {
+
+        const result = await userModel.updateOne({email: user.email}, )
+
+    }
     //Products
 
     getAll = async () => {

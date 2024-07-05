@@ -2,12 +2,13 @@ const form = document.getElementById("registerForm");
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
-    console.log("paso por aca")
+
     const data = new FormData(form);
     const obj = {};
+
     data.forEach((value, key) => (obj[key] = value));
 
-    
+    console.log(obj)
     fetch("/api/sessions/register", {
         method: "POST",
         body: JSON.stringify(obj),

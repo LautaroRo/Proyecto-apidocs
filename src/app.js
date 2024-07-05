@@ -5,17 +5,17 @@ import handlebars from "express-handlebars"
 import passport from "passport"
 import cookieParser from "cookie-parser"
 import initializePassport from "./config/passportConfig.js"
-import routerSessions from "./routes/routerSessions.js"
 import { entorno } from "./config/variables.config.js"
-import routerViews from "./routes/routerViews.js"
-import routerProducts from "./routes/routerProducts.js"
-import routerCart from "./routes/routerCart.js"
 import { Server } from "socket.io"
 import { users } from "./dao/factory.js"
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
 import _dirname from "./utils.js"
-
+import routerUsers from "./routes/routerUsers.js"
+import routerViews from "./routes/routerViews.js"
+import routerProducts from "./routes/routerProducts.js"
+import routerCart from "./routes/routerCart.js"
+import routerSessions from "./routes/routerSessions.js"
 const app = express()
 //apiproducts
 const swaggerOptionsProducts = {
@@ -80,6 +80,9 @@ app.use("/", routerViews.getRouter())
 app.use("/api/sessions", routerSessions.getRouter())
 app.use("/api/products", routerProducts.getRouter())
 app.use("/api/cart", routerCart.getRouter())
+app.use("/api/users", routerUsers.getRouter())
+
+
 
 const servidor = app.listen(entorno.PORT, console.log("Corriendo"))
 

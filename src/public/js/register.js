@@ -8,7 +8,6 @@ form.addEventListener("submit", (e) => {
 
     data.forEach((value, key) => (obj[key] = value));
 
-    console.log(obj)
     fetch("/api/sessions/register", {
         method: "POST",
         body: JSON.stringify(obj),
@@ -17,7 +16,4 @@ form.addEventListener("submit", (e) => {
         },
     })
         .then((response) => response.json())
-        .then((json) => {
-            console.log(json);
-        });
 });

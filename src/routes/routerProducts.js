@@ -1,13 +1,14 @@
 import RouterMain from "./RouterMain.js";
 import { users } from "../dao/factory.js";
 import { CustomErrors } from "../CustomErrors/erros.js";
+import uploadProducts from "../config/multerProdcuts.js";
 class routerProducts extends RouterMain{
     init(){
         this.get("/", this.getProducts)
         this.put("/updateProduct/:id", this.updateProduct)
-        this.post("/addProduct", this.addProduct)
+        this.post("/addProduct", uploadProducts.single('file'), this.addProduct)
         this.delete("/deleteProduct/:code", this.deleteProduct)
-        this.get("/find/:id", this.ProductsId)
+        this.get("/find/:id",  this.ProductsId)
         
     }
 
@@ -63,23 +64,27 @@ class routerProducts extends RouterMain{
         }
     }
     async addProduct(req,res){
-        const {title, description, code, category,stock,thumbnails,status, price} = req.body
+        const {title, description, code, category,stock,status, price} = req.body
 
-        if(!title || !description || !code || !category || !stock || !thumbnails || !status || !price) {
+
+        if(!title || !description || !code || !category || !stock || !req.file|| !status || !price) {
             const error = CustomErrors.Errors("Error al crear un prducto", "faltan parametros", 1001)
             return res.json({error})
         }
+        const statusModificate = status === "True" ? true : false
+        const SotckModificte = parseInt(stock)
+        const priceModificate = parseInt(price)
         const obj = {
             title,
             description,
             code,
             category,
-            stock,
-            thumbnails: thumbnails,
-            status,
-            price
+            stock:SotckModificte,
+            thumbnails: [{ img: req.file.filename }],
+            status:statusModificate,
+            price:priceModificate
         }
-
+        
         users.addProduct(obj)
         res.send("Producto creado")
     }

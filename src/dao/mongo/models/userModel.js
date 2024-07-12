@@ -29,7 +29,7 @@ const SchemaDB = new Schema(
             ],
             default: [],
         },
-        last_conneciton: Date
+        last_connection: String
     }
 
 )

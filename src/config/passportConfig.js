@@ -32,12 +32,6 @@ const initializePassport = () => {
                         age,
                         email,
                         password: createHas(password),
-                        documents: [
-                            {
-                                name: req.file.originalname,
-                                url: `/public/images/${req.file.filename}`
-                            }
-                        ]
                     }
 
                     req.session.user = {
@@ -83,6 +77,25 @@ const initializePassport = () => {
                     if (!user) return done(null, false);
                     const valid = isValidPassword(user, password);
                     if (!valid) return done(null, false);
+
+                    const newDate = {
+                        last_connection: Date.now()
+                    }
+                    
+                    const lastConnectionDate = new Date(newDate.last_connection);
+                    
+                    const formattedDate = lastConnectionDate.toLocaleString('es-ES', { 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        second: '2-digit'
+                    });
+
+                    user.last_connection = formattedDate;
+                    
+                    await users.addFile(user._id, user)
 
                     await transport.sendMail({
                         from:`Correo de prueba <${entorno.MAIL_USERNAME}/>`,

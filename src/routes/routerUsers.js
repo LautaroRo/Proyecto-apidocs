@@ -1,11 +1,12 @@
 import RouterMain from "./RouterMain.js";
-import { users } from "../dao/factory.js";
-
+import { users} from "../dao/factory.js";
+import uploadProfiles from "./../config/multer.js"
 class routerUsers extends RouterMain{
 
     init(){
         this.delete("/deleteUser/:email", this.deleteUser)
         this.put("/changeRole/:id", this.changeRole)
+        this.post("/addFile/:email", uploadProfiles.single('file'), this.addFile)
     }
     async deleteUser(req, res) {
         try {
@@ -45,6 +46,26 @@ class routerUsers extends RouterMain{
         if(!result) return res.json({status:"Error"})
 
         return res.json({status:"Succes"})
+    }
+
+
+    async addFile(req,res){
+    
+        const email = req.params.email
+        const FirstUser = await users.getOne(email)
+
+        const newDocument = {
+            name: req.body.name,
+            url: req.file.path,
+        };
+
+
+        FirstUser.documents.push(newDocument)
+
+        await users.addFile(FirstUser._id, FirstUser)
+
+
+        return res.json({status: "Succes"})
     }
 }
 

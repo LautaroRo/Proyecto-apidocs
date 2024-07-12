@@ -1,4 +1,4 @@
-import upload from "../config/multer.js";
+
 import RouterMain from "./RouterMain.js";
 import passport from "passport";
 
@@ -6,12 +6,10 @@ import passport from "passport";
 class routeUsers extends RouterMain {
     init() {
         this.get("/Profile", this.traerUsuarios)
-        this.post('/register',upload.single("image"), passport.authenticate('register', {
+        this.post('/register', passport.authenticate('register', {
             failureRedirect: '/failRegister'
         }), (req, res) => {
             try {
-                const {image} = req.body
-                console.log(image)
                 return res.json({ status: "succes" });
             } catch (error) {
                 return res.json({ error: error })

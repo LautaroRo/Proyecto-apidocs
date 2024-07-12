@@ -24,6 +24,11 @@ class users {
         return result
     }
 
+    addFile = async (id,user) => {
+        const result = await userModel.updateOne({_id:id}, {$set: user})
+
+        return result
+    }
     getUserById = async (id) => {
         const result = await userModel.findById(id)
 
@@ -78,6 +83,7 @@ class users {
 
         let result = await productsModel.create(product)
 
+        console.log(result)
         return result
     }
 
@@ -195,6 +201,7 @@ class users {
 
         await usuario.save()
     }
+
 }
 
 export default new users()

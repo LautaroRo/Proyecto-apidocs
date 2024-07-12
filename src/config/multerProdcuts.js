@@ -1,9 +1,8 @@
 import multer from "multer";
 import _dirname from "../utils.js";
-
-const storageProfiles = multer.diskStorage({
+const storagePorducts = multer.diskStorage({
     destination: function (req,file,cb) {
-        cb(null, `${_dirname}/public/images/Profiles`)
+        cb(null, `${_dirname}/public/images/Products`)
     },
     filename: function (req,file,cb){
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9)
@@ -11,7 +10,7 @@ const storageProfiles = multer.diskStorage({
     }
 })
 
-const uploadProfiles = multer({ storage: storageProfiles });
+const uploadProducts  = multer({ storage: storagePorducts });
 
 
-export default uploadProfiles;
+export default uploadProducts

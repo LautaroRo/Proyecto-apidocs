@@ -7,7 +7,7 @@ class routerProducts extends RouterMain{
         this.get("/", this.getProducts)
         this.put("/updateProduct/:id/:idUser", this.updateProduct)
         this.post("/addProduct", uploadProducts.single('file'), this.addProduct)
-        this.delete("/deleteProduct/:code", this.deleteProduct)
+        this.delete("/deleteProduct/:code/:id", this.deleteProduct)
         this.get("/find/:id",  this.ProductsId)
         
     }
@@ -22,7 +22,11 @@ class routerProducts extends RouterMain{
     async deleteProduct(req,res){
         try{
             const params = req.params.code
-
+            const params2 = req.params.id
+            const verficateProduct = await users.getProductByCode(params)
+            const user = await users.getUserById(params2)
+            if(user.role !== "Premium") return res.json({error: "No posees el rol adecuado"})
+            if(verficateProduct.owner !== `${user.first_name} ${user.last_name}`) return res.json({error: "Debes ser Owner para poder modificar"})
             await users.deleteProduct(params)
 
             res.json({status: "Producto eliminado"})
@@ -42,7 +46,7 @@ class routerProducts extends RouterMain{
             const user = await users.getUserById(params2)
             const product = await users.getProductById(params)
             if(user.role !== "Premium") return res.json({error: "No posees el rol adecuado"})
-            if(product.owner !== `${user.first_name} ${user.last_name}`) return res.json({error: "Debes ser Owner para poder modificar"})
+            if(product.owner !== `${user.first_name} ${user.last_name}`) return res.json({error: "Debes ser Owner para poder eliminarlo"})
 
 
             const body = req.body

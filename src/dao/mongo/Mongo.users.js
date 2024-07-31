@@ -46,6 +46,10 @@ class users {
 
     //Products
 
+    getProductByCode = async (code) => {
+        let result = await productsModel.findOne({code: code})
+        return result
+    }
     getAll = async () => {
         let result = await productsModel.find()
 

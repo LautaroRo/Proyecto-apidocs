@@ -14,6 +14,17 @@ form.addEventListener("submit", (e) => {
         headers: {
             "Content-Type": "application/json",
         },
+    })    .then((response) => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
     })
-        .then((response) => response.json())
+    .then((response) => {
+        if (response.status === "Succes") {
+            window.location.replace("/login");
+        } else {
+            console.log("algo salio mal");
+        }
+    })
 });

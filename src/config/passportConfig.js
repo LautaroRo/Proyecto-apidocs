@@ -95,7 +95,7 @@ const initializePassport = () => {
 
                     user.last_connection = formattedDate;
                     
-                    await users.addFile(user._id, user)
+                    await users.updateUser(user._id, user)
 
                     await transport.sendMail({
                         from:`Correo de prueba <${entorno.MAIL_USERNAME}/>`,

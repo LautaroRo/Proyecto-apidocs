@@ -12,24 +12,37 @@ const ticketSchema = new Schema({
 });
 const SchemaDB = new Schema(
     {
-        first_name: String,
-        last_name: String,
-        email: String,
-        age: Number,
-        number: Number,
-        role: String,
-        password: String,
+        first_name: { type: String, required: true },
+        last_name: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
+        age: { type: Number, required: true },
+        number: { type: Number, required: true },
+        role: {
+            type: String,
+            enum: ['Usuario', 'Admin', 'Premium'],
+            required: true
+        },
+        password: { type: String, required: true },
         tickets: [ticketSchema],
         documents: {
             type: [
                 {
                     name: String,
                     url: String
-                },
+                }
             ],
-            default: [],
+            default: []
         },
-        last_connection: String
+        voucher: {
+            type: [
+                {
+                    identificacion: String,
+                    domicilio: String
+                }
+            ],
+            default: []
+        },
+        last_connection: { type: String }
     }
 
 )

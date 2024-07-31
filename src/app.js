@@ -6,8 +6,7 @@ import passport from "passport"
 import cookieParser from "cookie-parser"
 import initializePassport from "./config/passportConfig.js"
 import { entorno } from "./config/variables.config.js"
-import { Server } from "socket.io"
-import { users } from "./dao/factory.js"
+import path from "path"
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
 import _dirname from "./utils.js"
@@ -71,10 +70,18 @@ app.use(passport.session())
 
 
 
+const hbs = handlebars.create({
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true,
+    }
+});
 
-app.engine("handlebars", handlebars.engine())
-app.set("views", _dirname + "/views")
-app.set("view engine", "handlebars")
+app.use('/public', express.static(path.join(_dirname, 'public')));
+
+app.engine("handlebars", hbs.engine);
+app.set("view engine", "handlebars");
+app.set("views", _dirname + "/views");
 
 app.use("/", routerViews.getRouter())
 app.use("/api/sessions", routerSessions.getRouter())
@@ -83,18 +90,5 @@ app.use("/api/cart", routerCart.getRouter())
 app.use("/api/users", routerUsers.getRouter())
 
 
+app.listen(entorno.PORT, () => console.log("Corriendo"))
 
-const servidor = app.listen(entorno.PORT, console.log("Corriendo"))
-
-const io = new Server(servidor)
-const msg = []
-io.on("connection", socket => {
-
-    socket.on("message", (data) => {
-        msg.push(data)
-        users.createMessage(data)
-        io.emit("messageLogs", msg)
-
-    })
-
-})

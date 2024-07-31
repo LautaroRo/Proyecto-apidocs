@@ -5,7 +5,7 @@ import uploadProducts from "../config/multerProdcuts.js";
 class routerProducts extends RouterMain{
     init(){
         this.get("/", this.getProducts)
-        this.put("/updateProduct/:id", this.updateProduct)
+        this.put("/updateProduct/:id/:idUser", this.updateProduct)
         this.post("/addProduct", uploadProducts.single('file'), this.addProduct)
         this.delete("/deleteProduct/:code", this.deleteProduct)
         this.get("/find/:id",  this.ProductsId)
@@ -37,6 +37,14 @@ class routerProducts extends RouterMain{
         try{
 
             const params = req.params.id
+            const params2 = req.params.idUser
+
+            const user = await users.getUserById(params2)
+            const product = await users.getProductById(params)
+            if(user.role !== "Premium") return res.json({error: "No posees el rol adecuado"})
+            if(product.owner !== `${user.first_name} ${user.last_name}`) return res.json({error: "Debes ser Owner para poder modificar"})
+
+
             const body = req.body
             
             const result = await users.updateProduct(body, params)
@@ -64,29 +72,48 @@ class routerProducts extends RouterMain{
         }
     }
     async addProduct(req,res){
-        const {title, description, code, category,stock,status, price} = req.body
+        try{
+            if(!req.session.user) return res.redirect("/login")
+
+            const {title, description, category,stock,status, price} = req.body
 
 
-        if(!title || !description || !code || !category || !stock || !req.file|| !status || !price) {
-            const error = CustomErrors.Errors("Error al crear un prducto", "faltan parametros", 1001)
-            return res.json({error})
+            if(!title || !description || !category || !stock || !req.file|| !status || !price) {
+                const error = CustomErrors.Errors("Error al crear un prducto", "faltan parametros", 1001)
+                return res.json({error})
+            }
+            const statusModificate = status === "True" ? true : false
+            const SotckModificte = parseInt(stock)
+            const priceModificate = parseInt(price)
+    
+            let code = ""
+    
+            for(let i = 0; i < 5; i++){
+                const abecedario = 'abcdefghijklmnopqrstuvwxyz';
+                const number = Math.floor(Math.random() * 20)
+    
+                code += abecedario[i]
+                code += number
+            }
+            const obj = {
+                title,
+                description,
+                code,
+                category,
+                stock:SotckModificte,
+                thumbnails: [{ img: req.file.filename }],
+                status:statusModificate,
+                price:priceModificate,
+                owner: `${req.session.user.first_name} ${req.session.user.last_name}`
+            }
+            
+            users.addProduct(obj)
+
+            return res.redirect("/perfil")
+        }catch(error){
+
         }
-        const statusModificate = status === "True" ? true : false
-        const SotckModificte = parseInt(stock)
-        const priceModificate = parseInt(price)
-        const obj = {
-            title,
-            description,
-            code,
-            category,
-            stock:SotckModificte,
-            thumbnails: [{ img: req.file.filename }],
-            status:statusModificate,
-            price:priceModificate
-        }
-        
-        users.addProduct(obj)
-        res.send("Producto creado")
+
     }
 
 

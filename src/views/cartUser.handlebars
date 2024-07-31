@@ -1,0 +1,27 @@
+<div>
+  {{#if product}}
+    {{#each product}}
+      <h1>{{title}}</h1>
+      <h2>{{quantity}}</h2>
+
+      <button
+        class="button"
+        id="{{ids.idProduct}}"
+        data-cart-id="{{ids.idCart}}"
+      >Comprar</button>
+      <button
+        class="buttonDelete"
+        id="{{ids.idProduct}}"
+        data-cart-id="{{ids.idCart}}"
+      >Eliminar Poducto</button>
+    {{/each}}
+
+  <br>
+    <button id="eliminarTodos">Eliminar todos los productos</button>
+  {{else}}
+
+    No hay productos
+  {{/if}}
+</div>
+
+<script src="/js/purchaseProduct.js"></script>

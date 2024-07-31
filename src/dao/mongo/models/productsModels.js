@@ -46,6 +46,10 @@ const schema = new Schema({
     price: {
         type: Number,
         required: true 
+    },
+    owner: {
+        type: String,
+        required: true
     }
 });
 

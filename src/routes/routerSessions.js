@@ -10,11 +10,10 @@ class routeUsers extends RouterMain {
             failureRedirect: '/failRegister'
         }), (req, res) => {
             try {
-                return res.json({ status: "succes" });
+                return res.json({ status: "Succes" })
             } catch (error) {
-                return res.json({ error: error })
+                res.status(500).send('Internal Server Error');
             }
-
         });
 
         this.post('/login', passport.authenticate('login'), (req, res) => {

@@ -1,22 +1,20 @@
 <div>
-    <h1>Tu perfil (sin datos sensibles)</h1>
-    <p>{{user.first_name}}</p> 
-    <p>{{user.email}}</p>
-    <p>{{user.age}}</p>
 
-    <div>
-    <input type="text" id="chatbox">
-    {{#if mensajes}}
-        {{#each mensajes}}
-            <p>{{nombre}} dice {{mensaje}}</p>
-        {{/each}}
-    {{else}}
-        <p>No hay mensajes disponibles.</p>
-    {{/if}}
-    <p id="log"></p>
-</div>
+        <h1>Tu perfil (sin datos sensibles)</h1>
+        <p>{{user.first_name}}</p>
+        <p>{{user.email}}</p>
+        <p>{{user.age}}</p>
+
+
+                <a href="/getProducts">Productos</a>
+                {{#if status}}
+                        <a href="/createProducts">Crear Productos</a>
+                {{else}}
+                {{/if}}
+
+        <a href="/renderCart">Carrito</a>
+        <button id="buttonClose">Cerrar sesion</button>
+
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/home.js"></script>
-<script src="./../app.js"></script>
+<script src="/js/closeSession.js"></script>

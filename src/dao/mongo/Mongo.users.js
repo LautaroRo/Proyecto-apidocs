@@ -1,7 +1,7 @@
 import userModel from "./models/userModel.js";
-import messagesModel from "./models/messagesModel.js";
 import productsModel from "./models/productsModels.js";
 import cartsModel from "./models/carritoModels.js";
+import mongoose from "mongoose";
 class users {
     constructor() {
 
@@ -24,28 +24,13 @@ class users {
         return result
     }
 
-    addFile = async (id,user) => {
-        const result = await userModel.updateOne({_id:id}, {$set: user})
-
-        return result
-    }
     getUserById = async (id) => {
         const result = await userModel.findById(id)
 
         return result
     }
 
-    createMessage = async (message) => {
-        let result = await messagesModel.create(message)
-        return result
-    }
 
-    mostrarMensajes = async () => {
-
-        let result = await messagesModel.find()
-
-        return result
-    }
 
     deleteUser = async (email) => {
         let result = await userModel.deleteOne({email: email})
@@ -53,17 +38,12 @@ class users {
         return result
     }
 
-    changeRole = async (id,role) => {
-        let result = await userModel.updateOne({_id: id}, {$set: role})
+    updateUser = async (id,user) => {
+        let result = await userModel.updateOne({_id: id}, {$set: user})
 
         return result
     }
 
-    lastConnection = async (user) => {
-
-        const result = await userModel.updateOne({email: user.email}, )
-
-    }
     //Products
 
     getAll = async () => {
@@ -83,7 +63,6 @@ class users {
 
         let result = await productsModel.create(product)
 
-        console.log(result)
         return result
     }
 
@@ -109,6 +88,11 @@ class users {
         return result
     }
 
+    getCartByUser = async (user) => {
+        const result = await cartsModel.findOne({user: user})
+
+        return result
+    }
     createCart = async (userId) => {
         try {
             const result = await cartsModel.create({ user: userId, productsCart: [] });
@@ -132,7 +116,7 @@ class users {
         let cart = await cartsModel.findById(cid);
         let producto = await productsModel.findById(pid)
 
-        let product = cart.productsCart.find((producto) => producto.product.toString() === pid);
+        let product = cart.productsCart.find((producto) => producto.product.toString() === pid.toString());
 
 
         const quantity = parseInt(cantidad)
@@ -152,12 +136,17 @@ class users {
     }
 
     deleteProductInCart = async (cid, pid) => {
+
         let cart = await cartsModel.findById(cid)
-        cart.productsCart = cart.productsCart.filter(element => element.product.toString() !== pid)
+        const productDelete = cart.productsCart.filter(element => element._id.equals(pid))
+        cart.productsCart = cart.productsCart.filter(element => !element._id.equals(pid))
+        let product = await productsModel.findById(productDelete[0].product)
+
+        product.stock += productDelete[0].quantity
 
         await cart.save();
-
-        return console.log("Succes")
+        await product.save();
+        return cart
     }
 
 
@@ -175,7 +164,15 @@ class users {
     deleteAllProduct = async (cid) => {
 
         let cart = await cartsModel.findById(cid)
+        for(let i = 0; cart.productsCart.length > i; i++){
+            const product = cart.productsCart[i].product
+            
+            let productFind = await productsModel.findById(product)
 
+            productFind.stock += cart.productsCart[i].quantity
+
+            await productFind.save()
+        }
         cart.productsCart = []
         await cart.save();
     }
@@ -183,6 +180,7 @@ class users {
 
     purchaseProduct = async(res, user) => {
         
+
         let numberRandom = ""
         for(let i = 0; 8 > i; i++){
             numberRandom += Math.floor(Math.random() * 100)
@@ -196,6 +194,8 @@ class users {
             amount: res.quantity,
             purchaser: user
         }
+
+
         let usuario = await userModel.findById(user)
         usuario.tickets.push(obj)
 

@@ -1,17 +1,38 @@
 import RouterMain from "./RouterMain.js";
 import { users } from "../dao/factory.js";
-
+import mongoose from "mongoose";
 class routerCart extends RouterMain{
     init(){
         this.get("/", this.getCart)
         this.post("/create/:uid", this.createCart)
-        this.post("/addProduct", this.addProduct)
         this.post("/purchase", this.purchaseProduct)
-        this.delete("/deleteAllProduct", this.deleteProductInCart)
+        this.delete("/deleteProducts", this.deleteProductInCart)
         this.delete("/deleteCart/:id", this.deleteCart)
+        this.delete("/deleteAllProduct", this.deleteAllProduct)
     }
 
 
+    async deleteAllProduct(req, res) {
+        try {
+            const userId = req.session.user.id;
+
+            const ObjectNewId = new mongoose.Types.ObjectId(userId)
+            let cart = await users.getCartByUser(ObjectNewId);
+    
+
+            if (!cart) {
+                return res.status(404).send('Cart not found');
+            }
+    
+            await users.deleteAllProduct(cart._id);
+    
+
+            return res.json({status: "Succes"})
+        } catch (error) {
+            console.error(error);
+            return res.status(500).send('Server error');
+        }
+    }
     async getCart(req,res) {
         const result = await users.getAll()
         res.json({products: result})
@@ -24,46 +45,31 @@ class routerCart extends RouterMain{
         res.send(params)
     }
 
-    async addProduct(req,res){
-
-        const {cid,pid,cantidad} = req.body
-
-        const product = await users.getProductById(pid)
-        const cart = await users.getCartById(cid)
-        const user = await users.getUserById(cart.user)
-
-        if(product.stock < cantidad) {
-            console.log("paso")
-            return res.send("No hay suficiente stock")
-        }
-        if(user.role === "Admin") return res.send("Lo sentimos solo los usuarios pueden agregar productos en el carrito")
-
-        users.addProductInCart(cid,pid,cantidad)
-
-        
-        return res.json({succes: "Producto agregado"})
-    }
 
     async purchaseProduct(req,res){
 
-        const {cid, pid} = req.body
+        const {pid, cid} = req.body
+        const pidObjectId = new mongoose.Types.ObjectId(pid);
 
-        const cart = await users.getCartById(cid)
-        const result2 = cart.productsCart.find(element => element.product.equals(pid));
+        const cart = await users.getCartById(cid);
         
+        const result2 = cart.productsCart.find(element => element._id.equals(pidObjectId));
+
+
         if(result2) {
             await users.purchaseProduct(result2, cart.user)
-            await users.deleteProductInCart(cid,pid)
-            return res.send("enviado")
+            await users.deleteProductInCart(cid,pidObjectId)
+            return res.json({status: "Succes"})
         }
         
-        return res.send("No enviado")
+        return res.json({status: "Rejected"})
 
     }
 
     async deleteProductInCart(req,res){
         const {cid,pid} = req.body
 
+        
         const result = await users.deleteProductInCart(cid,pid)
 
         res.json({payload: result, status:"succes"})

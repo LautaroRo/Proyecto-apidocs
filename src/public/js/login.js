@@ -19,6 +19,5 @@ form.addEventListener("submit", (e) => {
             console.log("algo salio mal");
         }
 
-        console.log(response)
     });
 });

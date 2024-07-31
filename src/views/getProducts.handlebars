@@ -1,0 +1,26 @@
+<div>
+    <h1>Lista de Productos</h1>
+    <ul>
+        {{#each products}}
+        <li>
+            <h2>{{title}}</h2>
+            <p><strong>ID:</strong> {{_id}}</p>
+            <p><strong>Descripción:</strong> {{description}}</p>
+            <p><strong>Código:</strong> {{code}}</p>
+            <p><strong>Categoría:</strong> {{category}}</p>
+            <p><strong>Stock:</strong> {{stock}}</p>
+            <p><strong>Precio:</strong> ${{price}}</p>
+            <p><strong>Estado:</strong> {{#if status}}Disponible{{else}}No disponible{{/if}}</p>
+            {{#if thumbnails}}
+                {{#each thumbnails}}
+                    <img src="./../public//images/Products/{{img}}">
+                {{/each}}
+            {{/if}}
+        </li>
+
+        <input type="number" id="input" value="1"/>
+        <button id={{_id}} class="button">Comprar</button>
+        {{/each}}
+    </ul>
+</div>
+<script src="/js/addCart.js"></script>
